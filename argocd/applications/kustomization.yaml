@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - argocd.yaml
   - metallb.yaml
+  - pomerium.yaml

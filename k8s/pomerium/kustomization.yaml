@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: pomerium-zero
+
+resources:
+  - github.com/pomerium/pomerium/k8s/zero?ref=main
