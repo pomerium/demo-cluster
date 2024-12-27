@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# All resources will be placed in this namespace
+namespace: metallb-system
+
+resources:
+  - github.com/metallb/metallb/config/native?ref=v0.14.9
+  - addresspool.yaml
+  - l2advertisement.yaml
