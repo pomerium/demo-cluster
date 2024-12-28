@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minio
+  namespace: minio
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: minio
+  serviceName: minio-service
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      # Add the following affinity section:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: minio  # must match the label in template.metadata.labels
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: minio
+        image: minio/minio:latest
+        args:
+          - server
+          - http://minio-0.minio-service.minio.svc.cluster.local/data
+          - http://minio-1.minio-service.minio.svc.cluster.local/data
+          - http://minio-2.minio-service.minio.svc.cluster.local/data
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: minio-pvc
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1.8Ti
+      storageClassName: manual
