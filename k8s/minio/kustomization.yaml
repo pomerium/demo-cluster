@@ -4,4 +4,6 @@ kind: Kustomization
 namespace: minio
 
 resources:
+  - pv.yaml
   - github.com/minio/operator?ref=v6.0.4
+  - tenant.yaml
