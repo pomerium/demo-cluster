@@ -56,4 +56,4 @@ spec:
         resources:
           requests:
             storage: 1.8Ti
-        storageClassName: manual
+        storageClassName: local-path
