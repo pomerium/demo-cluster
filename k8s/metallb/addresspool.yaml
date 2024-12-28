@@ -3,6 +3,5 @@ kind: IPAddressPool
 metadata:
   name: k3s-lb-pool
 spec:
-  # We'll patch out this placeholder using an overlay
   addresses:
     - 192.168.68.150-192.168.68.160
