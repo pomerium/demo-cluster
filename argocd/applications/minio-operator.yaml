@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: minio-tenant
+  name: minio-operator
   namespace: argocd
 spec:
   project: default
