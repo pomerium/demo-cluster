@@ -4,24 +4,36 @@ metadata:
   name: minio
   namespace: minio
 spec:
+  serviceName: minio-service
   replicas: 3
   selector:
     matchLabels:
       app: minio
-  serviceName: minio-service
   template:
     metadata:
       labels:
         app: minio
     spec:
-      # Add the following affinity section:
+      # 1. Node Affinity to allow scheduling only on these 3 nodes.
       affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - pomerium-1         
+                      - pomerium-2-c7d580ec
+                      - pomerium-3-5300c67e
+        # 2. Pod Anti-affinity to ensure each replica lands on a different node.
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchLabels:
-                  app: minio  # must match the label in template.metadata.labels
+                  app: minio
               topologyKey: kubernetes.io/hostname
+
       containers:
       - name: minio
         image: minio/minio:latest
@@ -31,21 +43,17 @@ spec:
           - http://minio-1.minio-service.minio.svc.cluster.local/data
           - http://minio-2.minio-service.minio.svc.cluster.local/data
         ports:
-        - containerPort: 9000
+          - containerPort: 9000
         volumeMounts:
-        - name: data
-          mountPath: /data
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: minio-pvc
+          - name: data
+            mountPath: /data
+
   volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1.8Ti
-      storageClassName: manual
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1.8Ti
+        storageClassName: manual
