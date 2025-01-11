@@ -1,8 +1,11 @@
 ---
 clusterName: pomerium-demo
-talosVersion: v1.7.1
+talosVersion: v1.9.0
 kubernetesVersion: v1.32.0
-endpoint: https://192.168.68.150:6443
+
+# NOTE: We do NOT use the VIP as the Talos endpoint.
+# This is intentional to avoid issues if etcd is down.
+endpoint: https://192.168.68.101:6443
 domain: ${myDomainName}
 allowSchedulingOnMasters: false
 
@@ -10,6 +13,7 @@ additionalMachineCertSans:
   - 192.168.68.150
 additionalApiServerCertSans:
   - pomerium-demo.local
+  - 127.0.0.1
 
 clusterPodNets:
   - 10.244.0.0/16
@@ -32,8 +36,6 @@ controlPlane:
     size: 1TB
     type: nvme
 
-  # No extra data disks on control-plane nodes
-
   ingressFirewall:
     defaultAction: block
     rules:
@@ -43,6 +45,7 @@ controlPlane:
             - 10250
           protocol: tcp
         ingress:
+          # All control-plane nodes are on 192.168.68.x
           - subnet: 192.168.68.0/24
 
   patches:
@@ -60,24 +63,21 @@ controlPlane:
     use: control-plane
     manufacturer: Minisforum
     model: UM773-Lite
+
   nodeAnnotations:
     rack: demo-rack
-    installerUrl: '{{ .MachineConfig.MachineInstall.InstallImage }}'
-  nodeTaints:
-    mytaint: mytaints:NoSchedule
 
   # Common kernel module config
   kernelModules:
     - name: br_netfilter
       parameters:
         - nf_conntrack_max=131072
+    - name: k10temp
 
-  # Common DNS
   nameservers:
     - 1.1.1.1
     - 8.8.8.8
 
-  # Shared schematic customizations
   schematic:
     customization:
       extraKernelArgs:
@@ -85,7 +85,6 @@ controlPlane:
       systemExtensions:
         officialExtensions:
           - siderolabs/amd-ucode
-          - siderolabs/thunderbolt
 
 ################################################################################
 # WORKER (global defaults for worker nodes)
@@ -95,10 +94,15 @@ worker:
     mode: metal
     arch: amd64
 
-  # Most worker nodes have a 500GB OS disk; adjust as suits your hardware.
+  # Most worker nodes have a 500GB OS disk; you can adjust as suits your hardware.
   installDiskSelector:
     size: '<=1TB'
     type: nvme
+
+  # Example: data disks for worker nodes (for Ceph or other usage).
+  machineDisks:
+    - size: '>1.2TB'
+      type: nvme
 
   ingressFirewall:
     defaultAction: block
@@ -119,36 +123,31 @@ worker:
           feature-gates: GracefulNodeShutdown=false,MixedProtocolLBService=false
           rotate-server-certificates: "true"
       - op: add
-        path /machine/networkInterfaces/0/routes
+        path: /machine/networkInterfaces/0/routes
         value:
           - network: 0.0.0.0/0
             gateway: 192.168.68.1
 
-  # Use Intel microcode for typical worker hardware
   schematic:
     customization:
       systemExtensions:
         officialExtensions:
-          - siderolabs/intel-ucode
           - siderolabs/thunderbolt
+          - siderolabs/intel-ucode
 
-  # Common worker labels/annotations
   nodeLabels:
     rack: demo-rack
     use: worker
   nodeAnnotations:
     rack: demo-rack
-    installerUrl: '{{ .MachineConfig.MachineInstall.InstallImage }}'
 
   disableSearchDomain: true
 
-  # Kernel modules for all workers
   kernelModules:
     - name: br_netfilter
       parameters:
         - nf_conntrack_max=131072
 
-  # DNS
   nameservers:
     - 1.1.1.1
     - 8.8.8.8
@@ -163,9 +162,6 @@ nodes:
   - hostname: main1
     controlPlane: true
     ipAddress: 192.168.68.101
-
-    # Example network config with two interfaces.
-    # Remove or adjust if you only have one NIC.
     networkInterfaces:
       - interface: eth0
         addresses:
@@ -174,6 +170,9 @@ nodes:
           - network: 0.0.0.0/0
             gateway: 192.168.68.1
         mtu: 1500
+        # Add VIP config so all masters share the same floating IP
+        vip:
+          ip: 192.168.68.150
 
   - hostname: main2
     controlPlane: true
@@ -186,6 +185,8 @@ nodes:
           - network: 0.0.0.0/0
             gateway: 192.168.68.1
         mtu: 1500
+        vip:
+          ip: 192.168.68.150
 
   - hostname: main3
     controlPlane: true
@@ -198,6 +199,8 @@ nodes:
           - network: 0.0.0.0/0
             gateway: 192.168.68.1
         mtu: 1500
+        vip:
+          ip: 192.168.68.150
 
   #--------------------------------------------------------------------------
   # WORKERS
@@ -214,12 +217,30 @@ nodes:
     controlPlane: false
     ipAddress: 192.168.68.113
 
-  - hostname: heavyworker
+  - hostname: kworker4
     controlPlane: false
     ipAddress: 192.168.68.114
     installDiskSelector:
-      size: 2TB
+      size: '<=2TB'
       type: ssd
+    machineDisks:
+      - size: '<=2TB'
+        type: ssd
+      - size: '<=2TB'
+        type: ssd
     nodeLabels:
       manufacturer: Custom
       gpu: true
+      gpu.model: NVIDIA RTX 3090
+      gpu.count: 2
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/thunderbolt
+            - siderolabs/nvidia-driver
+            - siderolabs/nvidia-container-runtime
+            - siderolabs/nvidia-gpu-device-plugin
+            - siderolabs/amd-ucode
+    kernelModules:
+      - name: k10temp
