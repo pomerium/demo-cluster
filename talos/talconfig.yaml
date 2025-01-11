@@ -5,8 +5,8 @@ kubernetesVersion: v1.32.0
 
 # NOTE: We do NOT use the VIP as the Talos endpoint.
 # This is intentional to avoid issues if etcd is down.
-endpoint: https://192.168.68.101:6443
-domain: ${myDomainName}
+endpoint: https://192.168.68.100:6443
+domain: pomerium-demo.com
 allowSchedulingOnMasters: false
 
 additionalMachineCertSans:
@@ -31,11 +31,6 @@ controlPlane:
     mode: metal
     arch: amd64
 
-  # Each UM773 has a 1TB NVMe for Talos installation
-  installDiskSelector:
-    size: 1TB
-    type: nvme
-
   ingressFirewall:
     defaultAction: block
     rules:
@@ -55,7 +50,6 @@ controlPlane:
         value:
           feature-gates: GracefulNodeShutdown=true,MixedProtocolLBService=true
           rotate-server-certificates: "true"
-    - "@./extraKernelArgs-patch.yaml"
 
   # Common node labels, taints, annotations
   nodeLabels:
@@ -94,16 +88,6 @@ worker:
     mode: metal
     arch: amd64
 
-  # Most worker nodes have a 500GB OS disk; you can adjust as suits your hardware.
-  installDiskSelector:
-    size: '<=1TB'
-    type: nvme
-
-  # Example: data disks for worker nodes (for Ceph or other usage).
-  machineDisks:
-    - size: '>1.2TB'
-      type: nvme
-
   ingressFirewall:
     defaultAction: block
     rules:
@@ -122,11 +106,6 @@ worker:
         value:
           feature-gates: GracefulNodeShutdown=false,MixedProtocolLBService=false
           rotate-server-certificates: "true"
-      - op: add
-        path: /machine/networkInterfaces/0/routes
-        value:
-          - network: 0.0.0.0/0
-            gateway: 192.168.68.1
 
   schematic:
     customization:
@@ -134,6 +113,7 @@ worker:
         officialExtensions:
           - siderolabs/thunderbolt
           - siderolabs/intel-ucode
+          - siderolabs/mei
 
   nodeLabels:
     rack: demo-rack
@@ -161,11 +141,13 @@ nodes:
   #--------------------------------------------------------------------------
   - hostname: main1
     controlPlane: true
-    ipAddress: 192.168.68.101
+    ipAddress: 192.168.68.100
+    installDiskSelector:
+      type: nvme
     networkInterfaces:
       - interface: eth0
         addresses:
-          - 192.168.68.101/24
+          - 192.168.68.100/24
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.68.1
@@ -176,11 +158,13 @@ nodes:
 
   - hostname: main2
     controlPlane: true
-    ipAddress: 192.168.68.102
+    ipAddress: 192.168.68.101
+    installDiskSelector:
+      type: nvme
     networkInterfaces:
       - interface: eth0
         addresses:
-          - 192.168.68.102/24
+          - 192.168.68.101/24
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.68.1
@@ -190,11 +174,13 @@ nodes:
 
   - hostname: main3
     controlPlane: true
-    ipAddress: 192.168.68.103
+    ipAddress: 192.168.68.102
+    installDiskSelector:
+      type: nvme
     networkInterfaces:
       - interface: eth0
         addresses:
-          - 192.168.68.103/24
+          - 192.168.68.102/24
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.68.1
@@ -207,19 +193,43 @@ nodes:
   #--------------------------------------------------------------------------
   - hostname: kworker1
     controlPlane: false
-    ipAddress: 192.168.68.111
+    ipAddress: 192.168.68.110
+    installDiskSelector:
+      size: "<1TB"
+      type: nvme
+    machineDisks:
+      - size: 2TB
+        type: nvme
+      - size: 2TB
+        type: nvme
 
   - hostname: kworker2
     controlPlane: false
-    ipAddress: 192.168.68.112
+    ipAddress: 192.168.68.111
+    installDiskSelector:
+      size: "<1TB"
+      type: nvme
+    machineDisks:
+      - size: 2TB
+        type: nvme
+      - size: 2TB
+        type: nvme   
 
   - hostname: kworker3
     controlPlane: false
-    ipAddress: 192.168.68.113
+    ipAddress: 192.168.68.112
+    installDiskSelector:
+      size: "<1TB"
+      type: nvme
+    machineDisks:
+      - size: 2TB
+        type: nvme
+      - size: 2TB
+        type: nvme  
 
   - hostname: kworker4
     controlPlane: false
-    ipAddress: 192.168.68.114
+    ipAddress: 192.168.68.113
     installDiskSelector:
       size: '<=2TB'
       type: ssd
@@ -233,16 +243,21 @@ nodes:
     nodeLabels:
       manufacturer: Custom
       gpu: true
-      gpu.model: NVIDIA RTX 3090
+      gpu.model: "3090"
       gpu.count: 2
+    kernel:
+    modules:
+      - name: nvidia
+      - name: nvidia_uvm
+      - name: nvidia_drm
+      - name: nvidia_modeset
+    sysctls:
+      net.core.bpf_jit_harden: 1
     schematic:
       customization:
         systemExtensions:
           officialExtensions:
             - siderolabs/thunderbolt
-            - siderolabs/nvidia-driver
-            - siderolabs/nvidia-container-runtime
-            - siderolabs/nvidia-gpu-device-plugin
             - siderolabs/amd-ucode
     kernelModules:
       - name: k10temp
