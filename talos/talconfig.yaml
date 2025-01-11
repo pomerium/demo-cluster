@@ -1,0 +1,225 @@
+---
+clusterName: pomerium-demo
+talosVersion: v1.7.1
+kubernetesVersion: v1.32.0
+endpoint: https://192.168.68.150:6443
+domain: ${myDomainName}
+allowSchedulingOnMasters: false
+
+additionalMachineCertSans:
+  - 192.168.68.150
+additionalApiServerCertSans:
+  - pomerium-demo.local
+
+clusterPodNets:
+  - 10.244.0.0/16
+clusterSvcNets:
+  - 10.96.0.0/12
+
+cniConfig:
+  name: none  # We'll install cilium after Talos is up
+
+################################################################################
+# CONTROL PLANE (global defaults for master nodes)
+################################################################################
+controlPlane:
+  machineSpec:
+    mode: metal
+    arch: amd64
+
+  # Each UM773 has a 1TB NVMe for Talos installation
+  installDiskSelector:
+    size: 1TB
+    type: nvme
+
+  # No extra data disks on control-plane nodes
+
+  ingressFirewall:
+    defaultAction: block
+    rules:
+      - name: kubelet-ingress
+        portSelector:
+          ports:
+            - 10250
+          protocol: tcp
+        ingress:
+          - subnet: 192.168.68.0/24
+
+  patches:
+    - |-
+      - op: add
+        path: /machine/kubelet/extraArgs
+        value:
+          feature-gates: GracefulNodeShutdown=true,MixedProtocolLBService=true
+          rotate-server-certificates: "true"
+    - "@./extraKernelArgs-patch.yaml"
+
+  # Common node labels, taints, annotations
+  nodeLabels:
+    rack: demo-rack
+    use: control-plane
+    manufacturer: Minisforum
+    model: UM773-Lite
+  nodeAnnotations:
+    rack: demo-rack
+    installerUrl: '{{ .MachineConfig.MachineInstall.InstallImage }}'
+  nodeTaints:
+    mytaint: mytaints:NoSchedule
+
+  # Common kernel module config
+  kernelModules:
+    - name: br_netfilter
+      parameters:
+        - nf_conntrack_max=131072
+
+  # Common DNS
+  nameservers:
+    - 1.1.1.1
+    - 8.8.8.8
+
+  # Shared schematic customizations
+  schematic:
+    customization:
+      extraKernelArgs:
+        - net.ifnames=0
+      systemExtensions:
+        officialExtensions:
+          - siderolabs/amd-ucode
+          - siderolabs/thunderbolt
+
+################################################################################
+# WORKER (global defaults for worker nodes)
+################################################################################
+worker:
+  machineSpec:
+    mode: metal
+    arch: amd64
+
+  # Most worker nodes have a 500GB OS disk; adjust as suits your hardware.
+  installDiskSelector:
+    size: '<=1TB'
+    type: nvme
+
+  ingressFirewall:
+    defaultAction: block
+    rules:
+      - name: apid-ingress
+        portSelector:
+          ports:
+            - 50000
+          protocol: tcp
+        ingress:
+          - subnet: 10.96.0.0/12
+
+  patches:
+    - |-
+      - op: add
+        path: /machine/kubelet/extraArgs
+        value:
+          feature-gates: GracefulNodeShutdown=false,MixedProtocolLBService=false
+          rotate-server-certificates: "true"
+      - op: add
+        path /machine/networkInterfaces/0/routes
+        value:
+          - network: 0.0.0.0/0
+            gateway: 192.168.68.1
+
+  # Use Intel microcode for typical worker hardware
+  schematic:
+    customization:
+      systemExtensions:
+        officialExtensions:
+          - siderolabs/intel-ucode
+          - siderolabs/thunderbolt
+
+  # Common worker labels/annotations
+  nodeLabels:
+    rack: demo-rack
+    use: worker
+  nodeAnnotations:
+    rack: demo-rack
+    installerUrl: '{{ .MachineConfig.MachineInstall.InstallImage }}'
+
+  disableSearchDomain: true
+
+  # Kernel modules for all workers
+  kernelModules:
+    - name: br_netfilter
+      parameters:
+        - nf_conntrack_max=131072
+
+  # DNS
+  nameservers:
+    - 1.1.1.1
+    - 8.8.8.8
+
+################################################################################
+# NODES (specific configs, overriding global where needed)
+################################################################################
+nodes:
+  #--------------------------------------------------------------------------
+  # CONTROL PLANE
+  #--------------------------------------------------------------------------
+  - hostname: main1
+    controlPlane: true
+    ipAddress: 192.168.68.101
+
+    # Example network config with two interfaces.
+    # Remove or adjust if you only have one NIC.
+    networkInterfaces:
+      - interface: eth0
+        addresses:
+          - 192.168.68.101/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.68.1
+        mtu: 1500
+
+  - hostname: main2
+    controlPlane: true
+    ipAddress: 192.168.68.102
+    networkInterfaces:
+      - interface: eth0
+        addresses:
+          - 192.168.68.102/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.68.1
+        mtu: 1500
+
+  - hostname: main3
+    controlPlane: true
+    ipAddress: 192.168.68.103
+    networkInterfaces:
+      - interface: eth0
+        addresses:
+          - 192.168.68.103/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.68.1
+        mtu: 1500
+
+  #--------------------------------------------------------------------------
+  # WORKERS
+  #--------------------------------------------------------------------------
+  - hostname: kworker1
+    controlPlane: false
+    ipAddress: 192.168.68.111
+
+  - hostname: kworker2
+    controlPlane: false
+    ipAddress: 192.168.68.112
+
+  - hostname: kworker3
+    controlPlane: false
+    ipAddress: 192.168.68.113
+
+  - hostname: heavyworker
+    controlPlane: false
+    ipAddress: 192.168.68.114
+    installDiskSelector:
+      size: 2TB
+      type: ssd
+    nodeLabels:
+      manufacturer: Custom
+      gpu: true
