@@ -228,6 +228,8 @@ nodes:
         type: ssd
       - size: '<=2TB'
         type: ssd
+      - size: '>2TB'
+        type: nvme
     nodeLabels:
       manufacturer: Custom
       gpu: true
