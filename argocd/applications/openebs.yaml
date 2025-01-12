@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://openebs.github.io/charts
+    repoURL: https://openebs.github.io/openebs
     chart: openebs
-    targetRevision: 4.1.1
+    targetRevision: 4.1.2
   destination:
     server: https://kubernetes.default.svc
     namespace: openebs
