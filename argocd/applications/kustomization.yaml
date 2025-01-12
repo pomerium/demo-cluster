@@ -5,4 +5,5 @@ resources:
   - metallb.yaml
   - metrics-server.yaml
   - pomerium.yaml
+  - rook-ceph.yaml
   - vault.yaml
