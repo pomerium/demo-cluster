@@ -51,8 +51,8 @@ spec:
   # Number of pods, volumes, and scheduling constraints are defined per "pool"
   pools:
     - name: pool-0
-      servers: 3               # We want exactly 3 MinIO pods
-      volumesPerServer: 1      # 1 PVC per pod
+      servers: 4               # We want exactly 3 MinIO pods
+      volumesPerServer: 2      # 2 PVC per node
       volumeClaimTemplate:
         spec:
           storageClassName: local-path
@@ -61,19 +61,6 @@ spec:
           resources:
             requests:
               storage: 1.8Ti
-
-      # Enforce scheduling ONLY on pomerium-1, pomerium-2-c7d580ec, pomerium-3-5300c67e
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - pomerium-1
-                      - pomerium-2-c7d580ec
-                      - pomerium-3-5300c67e
 
         # Enforce that no two pods land on the same node
         podAntiAffinity:
