@@ -12,3 +12,8 @@ helmCharts:
     version: 1.16.1
     releaseName: rook-ceph
     namespace: rook-ceph
+  - name: rook-ceph-cluster
+    repo: https://charts.rook.io/release
+    version: 1.16.1
+    releaseName: rook-ceph-cluster
+    namespace: rook-ceph
