@@ -9,6 +9,6 @@ resources:
 helmCharts:
   - name: rook-ceph
     repo: https://charts.rook.io/release
-    version: 0.29.1
+    version: 1.16.1
     releaseName: rook-ceph
     namespace: rook-ceph
