@@ -3,7 +3,4 @@ kind: Kustomization
 resources:
   - argocd.yaml
   - metallb.yaml
-  - minio-operator.yaml
-  - minio-tenant.yaml
-  - openebs.yaml
   - pomerium.yaml
