@@ -10,3 +10,4 @@ data:
         - CiliumIdentity
       clusters:
         - "*"
+  kustomize.buildOptions: --enable-helm
