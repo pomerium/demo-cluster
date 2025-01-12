@@ -1,0 +1,25 @@
+global:
+  enabled: true
+  tlsDisable: false
+
+server:
+  enabled: true
+  image:
+    repository: hashicorp/vault
+    tag: "1.14.0"
+
+  ha:
+    enabled: true
+    replicas: 3
+    config: |
+      storage "raft" {
+        path    = "/vault/data"
+      }
+      listener "tcp" {
+        address     = "0.0.0.0:8200"
+        tls_disable = 0
+      }
+      api_addr = "https://vault.default.svc:8200"
+      cluster_addr = "https://vault.default.svc:8201"
+      disable_mlock = true
+      ui = true
