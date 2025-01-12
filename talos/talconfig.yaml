@@ -1,16 +1,17 @@
 ---
 clusterName: pomerium-demo
-talosVersion: v1.9.0
+talosVersion: v1.9.1
 kubernetesVersion: v1.32.0
 
 # NOTE: We do NOT use the VIP as the Talos endpoint.
 # This is intentional to avoid issues if etcd is down.
-endpoint: https://192.168.68.100:6443
+endpoint: https://192.168.68.150:6443
 domain: pomerium-demo.com
 allowSchedulingOnMasters: false
 
 additionalMachineCertSans:
   - 192.168.68.150
+  - 127.0.0.1
 additionalApiServerCertSans:
   - pomerium-demo.local
   - 127.0.0.1
@@ -21,7 +22,7 @@ clusterSvcNets:
   - 10.96.0.0/12
 
 cniConfig:
-  name: none  # We'll install cilium after Talos is up
+  name: none # Will use cilium as an inline manifest
 
 ################################################################################
 # CONTROL PLANE (global defaults for master nodes)
@@ -31,25 +32,25 @@ controlPlane:
     mode: metal
     arch: amd64
 
-  ingressFirewall:
-    defaultAction: block
-    rules:
-      - name: kubelet-ingress
-        portSelector:
-          ports:
-            - 10250
-          protocol: tcp
-        ingress:
-          # All control-plane nodes are on 192.168.68.x
-          - subnet: 192.168.68.0/24
-
   patches:
     - |-
       - op: add
         path: /machine/kubelet/extraArgs
         value:
-          feature-gates: GracefulNodeShutdown=true,MixedProtocolLBService=true
           rotate-server-certificates: "true"
+          feature-gates: GracefulNodeShutdown=true
+      - op: add
+        path: /cluster/controllerManager/extraArgs
+        value:
+          bind-address: 0.0.0.0
+      - op: add
+        path: /cluster/scheduler/extraArgs
+        value:
+          bind-address: 0.0.0.0
+      - op: add
+        path: /cluster/proxy/extraArgs
+        value:
+          bind-address: 0.0.0.0
 
   # Common node labels, taints, annotations
   nodeLabels:
@@ -79,6 +80,9 @@ controlPlane:
       systemExtensions:
         officialExtensions:
           - siderolabs/amd-ucode
+          - siderolabs/amdgpu
+          - siderolabs/util-linux-tools
+          - siderolabs/thunderbolt
 
 ################################################################################
 # WORKER (global defaults for worker nodes)
@@ -88,32 +92,28 @@ worker:
     mode: metal
     arch: amd64
 
-  ingressFirewall:
-    defaultAction: block
-    rules:
-      - name: apid-ingress
-        portSelector:
-          ports:
-            - 50000
-          protocol: tcp
-        ingress:
-          - subnet: 10.96.0.0/12
-
   patches:
     - |-
       - op: add
         path: /machine/kubelet/extraArgs
         value:
-          feature-gates: GracefulNodeShutdown=false,MixedProtocolLBService=false
           rotate-server-certificates: "true"
 
   schematic:
     customization:
+      extraKernelArgs:
+        - net.ifnames=0
+        - iommu=pt
+        - intel_iommu=on
+        - mitigations=off
       systemExtensions:
         officialExtensions:
           - siderolabs/thunderbolt
           - siderolabs/intel-ucode
           - siderolabs/mei
+          - siderolabs/util-linux-tools
+          - siderolabs/intel-ice-firmware 
+          - siderolabs/i915
 
   nodeLabels:
     rack: demo-rack
@@ -231,13 +231,11 @@ nodes:
     controlPlane: false
     ipAddress: 192.168.68.113
     installDiskSelector:
-      size: '<=2TB'
       type: ssd
     machineDisks:
-      - size: '<=2TB'
-        type: ssd
-      - size: '<=2TB'
-        type: ssd
+      - type: ssd
+      # - size: '<=2TB'
+      #   type: ssd
       - size: '>2TB'
         type: nvme
     nodeLabels:
@@ -245,12 +243,6 @@ nodes:
       gpu: true
       gpu.model: "3090"
       gpu.count: 2
-    kernel:
-    modules:
-      - name: nvidia
-      - name: nvidia_uvm
-      - name: nvidia_drm
-      - name: nvidia_modeset
     sysctls:
       net.core.bpf_jit_harden: 1
     schematic:
@@ -259,5 +251,13 @@ nodes:
           officialExtensions:
             - siderolabs/thunderbolt
             - siderolabs/amd-ucode
+            - siderolabs/amdgpu
+            - siderolabs/util-linux-tools
+            - siderolabs/nvidia-container-toolkit-production
+            - siderolabs/nvidia-fabricmanager-production
+            - siderolabs/nonfree-kmod-nvidia-production
     kernelModules:
       - name: k10temp
+      - name: br_netfilter
+        parameters:
+          - nf_conntrack_max=131072
