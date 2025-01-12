@@ -3,3 +3,6 @@ kind: Kustomization
 
 resources:
   - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+patchesStrategicMerge:
+  - argocd-cm-patch.yaml
