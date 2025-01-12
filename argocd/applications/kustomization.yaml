@@ -5,4 +5,5 @@ resources:
   - metallb.yaml
   - minio-operator.yaml
   - minio-tenant.yaml
+  - openebs.yaml
   - pomerium.yaml
