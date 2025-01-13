@@ -3,14 +3,9 @@ kind: Kustomization
 
 namespace: monitoring
 
-resources:
-- namespace.yaml
-- https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.79.2/bundle.yaml
-- https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.79.2/bundle.yaml
-
-# helmCharts:
-# - name: prometheus
-#   repo: https://prometheus-community.github.io/helm-charts
-#   version: 67.10.0
-#   releaseName: prometheus-stack
-#   namespace: monitoring
+helmCharts:
+- name: prometheus
+  repo: https://prometheus-community.github.io/helm-charts
+  version: 67.10.0
+  releaseName: prometheus-stack
+  namespace: monitoring
