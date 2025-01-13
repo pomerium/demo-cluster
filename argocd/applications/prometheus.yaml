@@ -11,8 +11,9 @@ spec:
     path: k8s/prometheus
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: monitoring
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+  createNamespace: true
