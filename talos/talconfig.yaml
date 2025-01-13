@@ -238,37 +238,36 @@ nodes:
       - size: 2TB
         type: nvme  
 
-  # - hostname: kworker4
-  #   controlPlane: false
-  #   ipAddress: 192.168.68.113
-  #   installDiskSelector:
-  #     type: ssd
-  #   machineDisks:
-  #     - type: ssd
-  #     # - size: '<=2TB'
-  #     #   type: ssd
-  #     - size: '>2TB'
-  #       type: nvme
-  #   nodeLabels:
-  #     manufacturer: Custom
-  #     gpu: true
-  #     gpu.model: "3090"
-  #     gpu.count: 2
-  #   sysctls:
-  #     net.core.bpf_jit_harden: 1
-  #   schematic:
-  #     customization:
-  #       systemExtensions:
-  #         officialExtensions:
-  #           - siderolabs/thunderbolt
-  #           - siderolabs/amd-ucode
-  #           - siderolabs/amdgpu
-  #           - siderolabs/util-linux-tools
-  #           - siderolabs/nvidia-container-toolkit-production
-  #           - siderolabs/nvidia-fabricmanager-production
-  #           - siderolabs/nonfree-kmod-nvidia-production
-  #   kernelModules:
-  #     - name: k10temp
-  #     - name: br_netfilter
-  #       parameters:
-  #         - nf_conntrack_max=131072
+  - hostname: kworker4
+    controlPlane: false
+    ipAddress: 192.168.68.113
+    installDiskSelector:
+      type: ssd
+      size: "<3TB"
+    machineDisks:
+      - type: ssd
+      - type: ssd
+      - type: nvme
+    nodeLabels:
+      manufacturer: Custom
+      gpu: true
+      gpu.model: "3090"
+      gpu.count: 2
+    sysctls:
+      net.core.bpf_jit_harden: 1
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/thunderbolt
+            - siderolabs/amd-ucode
+            - siderolabs/amdgpu
+            - siderolabs/util-linux-tools
+            # - siderolabs/nvidia-container-toolkit-production
+            # - siderolabs/nvidia-fabricmanager-production
+            # - siderolabs/nonfree-kmod-nvidia-production
+    kernelModules:
+      - name: k10temp
+      - name: br_netfilter
+        parameters:
+          - nf_conntrack_max=131072
