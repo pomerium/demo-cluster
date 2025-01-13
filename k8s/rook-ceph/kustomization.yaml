@@ -17,3 +17,6 @@ helmCharts:
     version: 1.16.1
     releaseName: rook-ceph-cluster
     namespace: rook-ceph
+    valuesInline:
+      monitoring.enabled: true
+      monitoring.createPrometheusRules: true
