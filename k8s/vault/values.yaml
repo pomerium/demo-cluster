@@ -1,4 +1,3 @@
-cat > override-values.yml << EOF
 # Vault Helm chart Value Overrides
 global:
   enabled: true
@@ -91,4 +90,3 @@ ui:
   serviceType: "LoadBalancer"
   serviceNodePort: null
   externalPort: 8200
-EOF
