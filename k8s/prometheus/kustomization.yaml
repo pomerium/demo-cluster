@@ -6,7 +6,7 @@ namespace: monitoring
 resources:
 - namespace.yaml
 - https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.79.2/bundle.yaml
-- https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/refs/tags/v0.79.2/bundle.yaml
+- https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.79.2/bundle.yaml
 
 # helmCharts:
 # - name: prometheus
