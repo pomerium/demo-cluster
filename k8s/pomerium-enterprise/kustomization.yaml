@@ -3,4 +3,4 @@ kind: Kustomization
 
 resources:
   - github.com/pomerium/documentation/k8s/console?ref=0-28-0
-  # - config.yaml
+  - config.yaml

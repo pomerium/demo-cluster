@@ -6,6 +6,7 @@ resources:
   - metrics-server.yaml
   - pomerium-core.yaml
   # - pomerium-enterprise.yaml
+  - postgres-operator.yaml
   - prometheus.yaml
   - rook-ceph.yaml
   - vault.yaml

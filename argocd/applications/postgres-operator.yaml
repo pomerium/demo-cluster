@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: pomerium-console
+  name: postgres-operator
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/pomerium/demo-cluster
     targetRevision: HEAD
-    path: k8s/pomerium-enterprise
+    path: k8s/postgres-operator
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:
