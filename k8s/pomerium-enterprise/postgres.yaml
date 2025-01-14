@@ -1,19 +1,32 @@
-apiVersion: "acid.zalan.do/v1"
-kind: postgresql
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
 metadata:
   name: pomerium-enterprise-db
 spec:
-  teamId: "pomerium"
-  volume:
+  instances: 2
+
+  storage:
     size: 10Gi
-  numberOfInstances: 2
-  users:
-    pomerium:
-      - superuser
-      - createdb
-  databases:
-    pomerium: pomerium  # dbname: owner
-  preparedDatabases:
-    bar: {}
-  postgresql:
-    version: "17"
+  monitoring:
+    enablePodMonitor: true
+  managed:
+    roles:
+    - name: pomerium
+      ensure: present
+      # Do not use this configuration in a production setup
+      comment: "Pomerium Enterprise Database"
+      login: true
+      superuser: true
+      disablePassword: temperature
+
+---
+
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: pomerium
+spec:
+  cluster: pomerium-enterprise-db
+  name: pomerium
+  owner: pomerium
+  
