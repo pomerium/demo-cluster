@@ -2,6 +2,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: pomerium-enterprise-db
+
 spec:
   instances: 2
 
@@ -18,14 +19,14 @@ spec:
       login: true
       superuser: true
       disablePassword: true
+  bootstrap:
+    initdb:
+      database: pomerium
+      owner: pomerium
 
----
+  enableSuperUserAccess: true
 
-apiVersion: postgresql.cnpg.io/v1
-kind: Database
-metadata:
-  name: pomerium
-spec:
-  cluster: pomerium-enterprise-db
-  name: pomerium
-  owner: pomerium
+  resources:
+    requests:
+      cpu: 2
+      memory: 4Gi
