@@ -4,7 +4,7 @@ metadata:
   name: enterprise
 data:
   # should match authenticate service URL from Pomerium Settings CRD
-  authenticate_service_url: https://authenticate.pomerium.dev/
+  authenticate_service_url: https://authenticate.pomerium.app # use hosted authenticate
   # audience should correspond to the name in the ingress you created for the console
   # without the protocol part
   audience: console.pomerium.dev

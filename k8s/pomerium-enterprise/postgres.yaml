@@ -8,12 +8,11 @@ spec:
     size: 10Gi
   numberOfInstances: 2
   users:
-    wmedford:  # database owner
-    - superuser
-    - createdb
-    foo_user: []  # role for application foo
+    pomerium-enterprise.pomerium:
+      - superuser
+      - createdb
   databases:
-    pomerium: wmedford  # dbname: owner
+    pomerium: pomerium  # dbname: owner
   preparedDatabases:
     bar: {}
   postgresql:
