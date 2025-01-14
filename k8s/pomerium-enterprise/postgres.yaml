@@ -10,21 +10,12 @@ spec:
     size: 10Gi
   monitoring:
     enablePodMonitor: true
-  managed:
-    roles:
-    - name: pomerium
-      ensure: present
-      # Do not use this configuration in a production setup
-      comment: "Pomerium Enterprise Database"
-      login: true
-      superuser: true
-      disablePassword: true
   bootstrap:
     initdb:
       database: pomerium
       owner: pomerium
-
-  enableSuperUserAccess: true
+      secret:
+        name: enterprise
 
   resources:
     requests:
