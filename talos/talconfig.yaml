@@ -6,7 +6,6 @@ kubernetesVersion: v1.32.0
 # NOTE: We do NOT use the VIP as the Talos endpoint.
 # This is intentional to avoid issues if etcd is down.
 endpoint: https://192.168.68.150:6443
-domain: pomerium-demo.com
 allowSchedulingOnMasters: false
 
 additionalMachineCertSans:
