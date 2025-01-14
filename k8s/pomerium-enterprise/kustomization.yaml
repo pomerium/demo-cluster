@@ -6,4 +6,4 @@ namespace: pomerium-enterprise
 resources:
   - github.com/pomerium/documentation/k8s/console?ref=0-28-0
   - config.yaml
-  - secret.yaml
+  - postgres.yaml
