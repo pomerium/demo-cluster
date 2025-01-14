@@ -11,7 +11,7 @@ spec:
     path: k8s/pomerium
   destination:
     server: https://kubernetes.default.svc
-    namespace: pomerium-zero
+    namespace: pomerium-enterprise
   syncPolicy:
     automated:
       prune: true

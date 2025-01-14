@@ -1,7 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: pomerium-zero
+namespace: pomerium-enterprise
 
 resources:
-  - github.com/pomerium/pomerium/k8s/zero?ref=main
+  - kubectl apply -k github.com/pomerium/documentation/k8s/core\?ref=0-27-0
+  - kubectl apply -k github.com/pomerium/documentation/k8s/console\?ref=0-27-0
+  # - config.yaml
