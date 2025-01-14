@@ -4,7 +4,8 @@ resources:
   - argocd.yaml
   - metallb.yaml
   - metrics-server.yaml
-  - pomerium.yaml
+  - pomerium-core.yaml
+  # - pomerium-enterprise.yaml
   - prometheus.yaml
   - rook-ceph.yaml
   - vault.yaml
