@@ -28,5 +28,5 @@ spec:
 
   resources:
     requests:
-      cpu: 2
+      cpu: '2'
       memory: 4Gi
