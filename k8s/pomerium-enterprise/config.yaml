@@ -12,7 +12,7 @@ data:
   # only use it for bootstrapping, and grant explicit permissions via the UI to the Global namespace
   administrators: wmedford@pomerium.com
   # databroker service URL allows Console to communicate to Pomerium Core
-  databroker_service_url: https://pomerium-databroker.pomerium.svc.pomerium-demo.com
+  databroker_service_url: https://pomerium-databroker.pomerium
   # external Prometheus service URL, to enable metrics.
   # see https://www.pomerium.com#metrics
   prometheus_url: https://prometheus-kube-prometheus-prometheus.default.svc.pomerium-demo.com
