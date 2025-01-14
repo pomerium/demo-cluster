@@ -11,7 +11,10 @@ spec:
     path: k8s/postgres-operator
   destination:
     server: https://kubernetes.default.svc
+    namespace: postgres-operator
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
