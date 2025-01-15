@@ -3,4 +3,5 @@ kind: Kustomization
 
 resources:
   - github.com/pomerium/ingress-controller/config/default?ref=v0.28.0
+PatchStrategicMerge:
   - github.com/pomerium/documentation/k8s/core?ref=0-28-0
