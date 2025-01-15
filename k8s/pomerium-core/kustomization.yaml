@@ -3,3 +3,5 @@ kind: Kustomization
 
 resources:
   - github.com/pomerium/documentation/k8s/core?ref=0-28-0
+  - global.yaml
+  - ingress.yaml
