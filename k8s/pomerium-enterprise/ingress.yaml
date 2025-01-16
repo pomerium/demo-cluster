@@ -7,6 +7,7 @@ metadata:
     # the below two annotations are required
     ingress.pomerium.io/pass_identity_headers: "true"
     ingress.pomerium.io/allow_any_authenticated_user: "true"
+    ingress.pomerium.io/secure_upstream: 'true'
 spec:
   ingressClassName: pomerium
   tls:
@@ -15,7 +16,7 @@ spec:
         - console.pomerium.dev
   rules:
     - host: "console.pomerium.dev"
-      https:
+      http:
         paths:
           - path: /
             pathType: Prefix
