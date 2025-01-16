@@ -16,4 +16,4 @@ data:
   override_certificate_name: pomerium.dev
   # external Prometheus service URL, to enable metrics.
   # see https://www.pomerium.com#metrics
-  prometheus_url: https://prometheus-kube-prometheus-prometheus.default.svc.cluster.local
+  prometheus_url: http://prometheus-kube-prometheus-prometheus.default:9090
