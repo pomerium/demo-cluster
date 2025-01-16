@@ -15,7 +15,7 @@ spec:
         - console.pomerium.dev
   rules:
     - host: "console.pomerium.dev"
-      http:
+      https:
         paths:
           - path: /
             pathType: Prefix
