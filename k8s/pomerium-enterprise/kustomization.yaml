@@ -8,3 +8,6 @@ resources:
   - config.yaml
   - postgres.yaml
   - ingress.yaml
+
+patchesStrategicMerge:
+  - deployment-patch.yaml

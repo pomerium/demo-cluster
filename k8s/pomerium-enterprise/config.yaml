@@ -13,6 +13,7 @@ data:
   administrators: wmedford@pomerium.com
   # databroker service URL allows Console to communicate to Pomerium Core
   databroker_service_url: https://pomerium-databroker.pomerium.svc.cluster.local
+  override_certificate_name: pomerium.dev
   # external Prometheus service URL, to enable metrics.
   # see https://www.pomerium.com#metrics
   prometheus_url: https://prometheus-kube-prometheus-prometheus.default.svc.cluster.local
