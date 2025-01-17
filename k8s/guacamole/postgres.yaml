@@ -1,0 +1,25 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: guacamole-db
+  namespace: guacamole
+
+spec:
+  instances: 2
+
+  storage:
+    size: 10Gi
+
+  bootstrap:
+    initdb:
+      database: guacamole_db
+      secret:
+        name: postgres-secret 
+
+  monitoring:
+    enablePodMonitor: true
+
+  resources:
+    requests:
+      cpu: '2'
+      memory: 4Gi

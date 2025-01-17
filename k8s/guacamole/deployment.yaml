@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guacd
+  namespace: guacamole
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: guacd
+  template:
+    metadata:
+      labels:
+        app: guacd
+    spec:
+      containers:
+      - name: guacd
+        image: guacamole/guacd:latest
+        volumeMounts:
+        - name: drive
+          mountPath: /drive
+        - name: record
+          mountPath: /record
+      volumes:
+      - name: drive
+        hostPath:
+          path: /guacamole/drive
+      - name: record
+        hostPath:
+          path: /guacamole/record
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guacamole
+  namespace: guacamole
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: guacamole
+  template:
+    metadata:
+      labels:
+        app: guacamole
+    spec:
+      containers:
+      - name: guacamole
+        image: guacamole/guacamole:latest
+        env:
+        - name: HEADER_ENABLED
+          value: "true"
+        - name: HTTP_AUTH_HEADER
+          value: "X-Pomerium-Claim-Email"
+        - name: GUACD_HOSTNAME
+          value: guacd
+        - name: POSTGRES_DATABASE
+          value: guacamole_db
+        - name: POSTGRES_HOSTNAME
+          value: guacamole-db-rw
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: username
+        - name: POSTGRESQL_AUTO_CREATE_ACCOUNTS
+          value: "true"
+        volumeMounts:
+        - name: drive
+          mountPath: /drive
+      volumes:
+      - name: drive
+        hostPath:
+          path: /guacamole/drive
