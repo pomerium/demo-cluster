@@ -4,6 +4,7 @@ metadata:
   name: guacamole-drive-pvc
   namespace: guacamole
 spec:
+  storageClassName: ceph-block
   accessModes:
     - ReadWriteMany
   resources:
@@ -16,6 +17,7 @@ metadata:
   name: guacamole-record-pvc
   namespace: guacamole
 spec:
+  storageClassName: ceph-block
   accessModes:
     - ReadWriteMany
   resources:
