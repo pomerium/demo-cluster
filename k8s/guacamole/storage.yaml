@@ -5,6 +5,7 @@ metadata:
   namespace: guacamole
 spec:
   storageClassName: ceph-block
+  volumeMode: Block
   accessModes:
     - ReadWriteMany
   resources:
@@ -18,6 +19,7 @@ metadata:
   namespace: guacamole
 spec:
   storageClassName: ceph-block
+  volumeMode: Block
   accessModes:
     - ReadWriteMany
   resources:
