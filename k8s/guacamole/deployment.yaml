@@ -23,11 +23,11 @@ spec:
           mountPath: /record
       volumes:
       - name: drive
-        hostPath:
-          path: /guacamole/drive
+        persistentVolumeClaim:
+          claimName: guacamole-drive-pvc
       - name: record
-        hostPath:
-          path: /guacamole/record
+        persistentVolumeClaim:
+          claimName: guacamole-record-pvc
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -75,5 +75,5 @@ spec:
           mountPath: /drive
       volumes:
       - name: drive
-        hostPath:
-          path: /guacamole/drive
+        persistentVolumeClaim:
+          claimName: guacamole-drive-pvc
