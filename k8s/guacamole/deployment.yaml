@@ -16,11 +16,11 @@ spec:
       containers:
       - name: guacd
         image: guacamole/guacd:latest
-        volumeMounts:
+        volumeDevices:
         - name: drive
-          mountPath: /drive
+          devicePath: /dev/drive
         - name: record
-          mountPath: /record
+          devicePath: /dev/record
       volumes:
       - name: drive
         persistentVolumeClaim:
@@ -70,9 +70,9 @@ spec:
               key: username
         - name: POSTGRESQL_AUTO_CREATE_ACCOUNTS
           value: "true"
-        volumeMounts:
+        volumeDevices:
         - name: drive
-          mountPath: /drive
+          devicePath: /dev/drive
       volumes:
       - name: drive
         persistentVolumeClaim:
