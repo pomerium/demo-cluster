@@ -1,0 +1,3 @@
+- allow:
+    and: 
+      - authenticated_user: 1

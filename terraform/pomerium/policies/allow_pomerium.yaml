@@ -1,0 +1,4 @@
+- allow:
+    and:
+      - domain:
+          is: pomerium.com
