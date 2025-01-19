@@ -1,3 +1,5 @@
 clusterconfig/*
 .aider*
 *secret.yaml
+*.terraform
+*.tfstate
