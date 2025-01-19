@@ -11,6 +11,22 @@ spec:
     targetRevision: 67.10.0
     helm:
       releaseName: prometheus
+    kustomize:
+      patches:
+        - target:
+            kind: Deployment
+            name: prometheus-grafana
+          patch: |-
+            - op: add
+              path: /spec/template/spec/containers/0/env/-
+              value:
+                name: GF_AUTH_SIGNOUT_REDIRECT_URL
+                value: "https://grafana.pomerium.dev/.pomerium/sign_out"
+            - op: add
+              path: /spec/template/spec/containers/0/env/-
+              value:
+                name: GF_AUTH_JWT_JWK_SET_URL
+                value: "https://authenticate.pomerium.dev/.well-known/pomerium/jwks.json"
   destination:
     server: https://kubernetes.default.svc
     namespace: default
@@ -20,19 +36,3 @@ spec:
       selfHeal: true
     syncOptions:
       - ServerSideApply=true
-  kustomize:
-    patches:
-      - target:
-          kind: Deployment
-          name: prometheus-grafana
-        patch: |-
-          - op: add
-            path: /spec/template/spec/containers/0/env/-
-            value:
-              name: GF_AUTH_SIGNOUT_REDIRECT_URL
-              value: "https://grafana.pomerium.dev/.pomerium/sign_out"
-          - op: add
-            path: /spec/template/spec/containers/0/env/-
-            value:
-              name: GF_AUTH_JWT_JWK_SET_URL
-              value: "https://authenticate.pomerium.dev/.well-known/pomerium/jwks.json"
