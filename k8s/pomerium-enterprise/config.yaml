@@ -17,4 +17,4 @@ data:
   # external Prometheus service URL, to enable metrics.
   # see https://www.pomerium.com#metrics
   prometheus_url: http://prometheus-kube-prometheus-prometheus.default:9090
-  bootstrap_service_account: true
+  bootstrap_service_account: "true"
