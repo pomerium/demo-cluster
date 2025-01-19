@@ -37,7 +37,4 @@ resource "pomerium_route" "guacamole" {
   allow_websockets      = true
   allow_spdy            = true
   pass_identity_headers = true
-  set_request_headers = {
-    X-Pomerium-Claim-Email = "$${pomerium.email}"
-  }
 }
