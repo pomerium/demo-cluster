@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-prometheus-stack-grafana
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - name: grafana
+          env:
+            - name: GF_AUTH_SIGNOUT_REDIRECT_URL
+              value: "https://grafana.pomerium.dev/.pomerium/sign_out"
+            - name: GF_AUTH_JWT_JWK_SET_URL
+              value: "https://authenticate.pomerium.dev/.well-known/pomerium/jwks.json"
