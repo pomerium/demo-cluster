@@ -3,7 +3,7 @@ locals {
 }
 resource "pomerium_route" "kubernetes" {
   name         = "kubernetes"
-  from         = format("%s%s", "k8s", local.base_domain)
+  from         = format("https://%s.%s", "k8s", local.base_domain)
   to           = ["https://kubernetes.default.svc.cluster.local"]
   namespace_id = pomerium_namespace.demo.id
   policies     = [pomerium_policy.allow_pomerium.id]
@@ -18,7 +18,7 @@ resource "pomerium_route" "kubernetes" {
 
 resource "pomerium_route" "argocd" {
   name         = "argocd"
-  from         = format("%s%s", "argocd", local.base_domain)
+  from         = format("https://%s.%s", "argocd", local.base_domain)
   to           = ["https://argocd-server.argocd.svc.cluster.local"]
   namespace_id = pomerium_namespace.demo.id
   policies     = [pomerium_policy.allow_pomerium.id]
