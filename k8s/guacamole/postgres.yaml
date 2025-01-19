@@ -13,6 +13,7 @@ spec:
   bootstrap:
     initdb:
       database: guacamole_db
+      owner: guacamole
       secret:
         name: postgres-secret 
 

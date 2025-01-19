@@ -54,16 +54,16 @@ spec:
           value: "X-Pomerium-Claim-Email"
         - name: GUACD_HOSTNAME
           value: guacd
-        - name: POSTGRES_DATABASE
+        - name: POSTGRESQL_DATABASE
           value: guacamole_db
-        - name: POSTGRES_HOSTNAME
+        - name: POSTGRESQL_HOSTNAME
           value: guacamole-db-rw
-        - name: POSTGRES_PASSWORD
+        - name: POSTGRESQL_PASSWORD
           valueFrom:
             secretKeyRef:
               name: postgres-secret
               key: password
-        - name: POSTGRES_USER
+        - name: POSTGRESQL_USER
           valueFrom:
             secretKeyRef:
               name: postgres-secret

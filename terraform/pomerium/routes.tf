@@ -26,3 +26,18 @@ resource "pomerium_route" "argocd" {
   allow_websockets = true
   allow_spdy       = true
 }
+
+resource "pomerium_route" "guacamole" {
+  name         = "guacamole"
+  from         = format("https://%s.%s", "guacamole", local.base_domain)
+  to           = ["http://guacamole.guacamole.svc.cluster.local"]
+  namespace_id = pomerium_namespace.demo.id
+  policies     = [pomerium_policy.allow_pomerium.id]
+
+  allow_websockets      = true
+  allow_spdy            = true
+  pass_identity_headers = true
+  set_request_headers = {
+    X-Pomerium-Claim-Email = "$${pomerium.email}"
+  }
+}
