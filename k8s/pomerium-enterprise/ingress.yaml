@@ -25,3 +25,31 @@ spec:
                 name: pomerium-console
                 port:
                   name: app
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pomerium-api
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: "pomerium-api.pomerium.dev"
+    # the below two annotations are required
+    ingress.pomerium.io/pass_identity_headers: "true"
+    ingress.pomerium.io/allow_any_authenticated_user: "true"
+    ingress.pomerium.io/secure_upstream: 'true'
+spec:
+  ingressClassName: pomerium
+  tls:
+    - secretName: pomerium-dev
+      hosts:
+        - pomerium-api.pomerium.dev
+  rules:
+    - host: "pomerium-api.pomerium.dev"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pomerium-console
+                port:
+                  name: grpc-api

@@ -7,7 +7,7 @@ data:
   authenticate_service_url: https://authenticate.pomerium.app # use hosted authenticate
   # audience should correspond to the name in the ingress you created for the console
   # without the protocol part
-  audience: console.pomerium.dev
+  audience: console.pomerium.dev,pomerium-api.pomerium.dev
   # administrators is a comma separated list of emails that would be granted admin privileges
   # only use it for bootstrapping, and grant explicit permissions via the UI to the Global namespace
   administrators: wmedford@pomerium.com
@@ -17,3 +17,4 @@ data:
   # external Prometheus service URL, to enable metrics.
   # see https://www.pomerium.com#metrics
   prometheus_url: http://prometheus-kube-prometheus-prometheus.default:9090
+  bootstrap_service_account: true
