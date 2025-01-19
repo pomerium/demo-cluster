@@ -56,6 +56,8 @@ spec:
           value: "X-Pomerium-Claim-Email"
         - name: GUACD_HOSTNAME
           value: guacd
+        - name: GUACD_PORT
+          value: "4822"
         - name: POSTGRESQL_DATABASE
           value: guacamole_db
         - name: POSTGRESQL_HOSTNAME
