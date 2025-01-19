@@ -38,3 +38,16 @@ resource "pomerium_route" "guacamole" {
   allow_spdy            = true
   pass_identity_headers = true
 }
+
+resource "pomerium_route" "grafana" {
+    name        = "grafana"
+    from        = format("https://%s.%s", "grafana", local.base_domain)
+    to          = ["http://prometheus-grafana.default.svc.cluster.local"]
+    namespace_id = pomerium_namespace.demo.id
+    policies    = [pomerium_policy.allow_pomerium.id]
+    
+    pass_identity_headers = true
+
+    allow_websockets = true
+    allow_spdy       = true
+}
