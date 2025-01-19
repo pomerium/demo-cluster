@@ -48,6 +48,8 @@ spec:
       - name: guacamole
         image: guacamole/guacamole:latest
         env:
+        - name: POSGRESQL_AUTO_CREATE_ACCOUNTS
+          value: "true"
         - name: HEADER_ENABLED
           value: "true"
         - name: HTTP_AUTH_HEADER
