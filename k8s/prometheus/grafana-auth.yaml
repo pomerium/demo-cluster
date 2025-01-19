@@ -13,3 +13,15 @@ spec:
               value: "https://grafana.pomerium.dev/.pomerium/sign_out"
             - name: GF_AUTH_JWT_JWK_SET_URL
               value: "https://authenticate.pomerium.dev/.well-known/pomerium/jwks.json"
+            - name: GF_AUTH_JWT_ENABLED
+              value: "true"
+            - name: GF_AUTH_JWT_HEADER_NAME
+              value: X-Pomerium-Jwt-Assertion
+            - name: GF_AUTH_JWT_EMAIL_CLAIM
+              value: sub
+            - name: GF_AUTH_JWT_USERNAME_CLAIM
+              value: sub
+            - name: GF_AUTH_JWT_CACHE_TTL
+              value: "5m"
+            - name: GF_AUTH_JWT_AUTO_SIGN_UP
+              value: "true"
