@@ -29,9 +29,6 @@ spec:
       - name: default
         pod: {}
       volumes:
-      - name: rootdisk
-        persistentVolumeClaim:
-          claimName: ubuntu-ssh-rootdisk
       - name: cloudinitdisk
         cloudInitNoCloud:
           userData: |
@@ -47,16 +44,3 @@ spec:
             runcmd:
               - systemctl enable ssh
               - systemctl start ssh
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: ubuntu-ssh-rootdisk
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 10Gi
-  storageClassName: ceph-block
-  volumeMode: Block
