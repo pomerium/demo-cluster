@@ -8,6 +8,7 @@ resource "pomerium_route" "kubernetes" {
   namespace_id = pomerium_namespace.demo.id
   policies     = [pomerium_policy.allow_pomerium.id]
 
+  tls_skip_verify  = true
   allow_websockets = true
   allow_spdy       = true
 
@@ -23,6 +24,7 @@ resource "pomerium_route" "argocd" {
   namespace_id = pomerium_namespace.demo.id
   policies     = [pomerium_policy.allow_pomerium.id]
 
+  tls_skip_verify  = true
   allow_websockets = true
   allow_spdy       = true
 }
@@ -40,14 +42,14 @@ resource "pomerium_route" "guacamole" {
 }
 
 resource "pomerium_route" "grafana" {
-    name        = "grafana"
-    from        = format("https://%s.%s", "grafana", local.base_domain)
-    to          = ["http://kube-prometheus-stack-grafana.default.svc.cluster.local"]
-    namespace_id = pomerium_namespace.demo.id
-    policies    = [pomerium_policy.allow_pomerium.id]
+  name         = "grafana"
+  from         = format("https://%s.%s", "grafana", local.base_domain)
+  to           = ["http://kube-prometheus-stack-grafana.default.svc.cluster.local"]
+  namespace_id = pomerium_namespace.demo.id
+  policies     = [pomerium_policy.allow_pomerium.id]
 
-    pass_identity_headers = true
+  pass_identity_headers = true
 
-    allow_websockets = true
-    allow_spdy       = true
+  allow_websockets = true
+  allow_spdy       = true
 }
