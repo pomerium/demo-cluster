@@ -54,7 +54,7 @@ metadata:
   name: ubuntu-ssh-rootdisk
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 10Gi
