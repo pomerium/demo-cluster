@@ -3,8 +3,6 @@ clusterName: pomerium-demo
 talosVersion: v1.9.1
 kubernetesVersion: v1.32.0
 
-# NOTE: We do NOT use the VIP as the Talos endpoint.
-# This is intentional to avoid issues if etcd is down.
 endpoint: https://192.168.68.150:6443
 allowSchedulingOnMasters: false
 
@@ -50,7 +48,27 @@ controlPlane:
         path: /cluster/proxy/extraArgs
         value:
           bind-address: 0.0.0.0
-
+      - op: add
+        path: /cluster/apiServer/extraArgs
+        value:
+          authentication-config: /var/auth/authentication-config.yaml
+  machineFiles:
+    - content: |
+        apiVersion: apiserver.config.k8s.io/v1beta1
+        kind: AuthenticationConfiguration
+        jwt:
+          - issuer:
+              url: https://k8s.pomerium.dev/ # note: the trailing slash is required
+              discoveryURL: https://k8s.pomerium.dev/.well-known/pomerium
+              audiences:
+                - k8s.pomerium.dev
+            claimMappings:
+              username:
+                claim: email
+                prefix: ''
+      path: /var/auth/authentication-config.yaml
+      permissions: 0o644
+      op: create
   # Common node labels, taints, annotations
   nodeLabels:
     rack: demo-rack
