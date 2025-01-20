@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kube-prometheus-stack-grafana
+  name: prometheus-grafana
   namespace: default
 spec:
   template:
