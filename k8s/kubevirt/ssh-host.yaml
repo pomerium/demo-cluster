@@ -1,0 +1,61 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: ubuntu-ssh
+spec:
+  running: true
+  template:
+    metadata:
+      labels:
+        kubevirt.io/vm: ubuntu-ssh
+    spec:
+      domain:
+        devices:
+          disks:
+          - name: rootdisk
+            disk:
+              bus: virtio
+          - name: cloudinitdisk
+            disk:
+              bus: virtio
+          interfaces:
+          - name: default
+            masquerade: {}
+        resources:
+          requests:
+            memory: 2Gi
+            cpu: "2"
+      networks:
+      - name: default
+        pod: {}
+      volumes:
+      - name: rootdisk
+        persistentVolumeClaim:
+          claimName: ubuntu-ssh-rootdisk
+      - name: cloudinitdisk
+        cloudInitNoCloud:
+          userData: |
+            #cloud-config
+            ssh_pwauth: False
+            ssh_authorized_keys:
+              # wmedford@pomerium
+              - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDUOyPVCvwCIIQYq6C5pD8N8YRB8+pEykrg50ukopzp3+1hD2+dy3/S/grzxXsZZ7c+DXT5nSGqwbQGA0hkLEV0IvdcOlDpkPYbWq+gx5Xl3L4/E50LgfCQPQaQh+USgCxm6UAnpn0hz/XIcK0788xo4UdbAXoo5O6uZ4X2Brb27yER3m5cDUaYyaEaNDOHCl5ffMa1dc0QMbCs42urIiHYMXUgvFiK/tZ8amGOAwELoqnFCGLP7xqu+nyD2vFgxxqjkhy2CzzQzdMwPpHu91xalyIuZ+b5VQyzCayE0gzCYHvNGOyR9/mX9dsN+/JB3SAaRVhNM2FnQ/9KJ0g8d5HX4wbSXjNTHrk0QOUE8Z3jxK5D4YO9dQdTjCCoxD/Tm0HhqiWYAGkWL9yCjBslgd3xK2eVCyJyEV9PW8d9XZkuaL7H+fPuHWTpWGjexlKrQtFjZY19k51OVP0iS36907CDFLaomUadsfy32p4rC9vxOpwRUk7aOKExuvxZ+CiGSZ0=
+              # guacamole@pomerium
+              - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC9Vyg4qzDPKePRorL8p8CieVHnBCQ5BHHRSdYJJM3ZPyICVlB9LK4r7sQaimea/IZkrAmX8KWhblrE5fsHYxYk031+HXsMZfSsbiNtMMjDwPE5wMztjNOtFhV7SQ3UiGSbMLPnfD1T52k99SzpVyw8k58kQgc7bzmdtKr9bsWNvKcFBGshF6iyze1kMi9wMvFw0QTTR8hdyAA3SPp52oubkoNLYMdKuPkcf57h+NaBfrVbJBXHrmoOpi9fsjXTq8w4cy1NIhtGixmw/L0D1pLjvjShhGJtDlgOcuvsPIjWzlX6AoeEeUM1t0IQmszRrHGh1eulSTOvIzrFv98j6ReuJIFIXZ5PYUC/v7JqlSgLrtYB7HMdnyrvzv3FmTngEySFB+MI2ZrGewpGsWg/hFBVpQFQ3guTwbEubdPmwlQSLaaRlmU8OnIcxQf+elriOZQcoYfGb4JvmZRFli4h+oPhP3YKw3gy2fxWHxMwU41tmv6PVMXPNHED19fucnsj7/PmH8At0VU2NexYMGLxwvIacTcCpVkRQh8oOqmsi0THHKEg92uzAuQYt5zVdN63XkhkJpmH7RbXL02CgOOtMgSmczje8r3gWABZKFQlOGTqOwBdVkVAj1XqtLTLQZsRx4zTM2zxAfjrPjAKsVD/5O2wKMp1kZhQb3O9mF9hgpxI9w==
+            packages:
+              - openssh-server
+            runcmd:
+              - systemctl enable ssh
+              - systemctl start ssh
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ubuntu-ssh-rootdisk
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: rook-ceph-block

@@ -4,6 +4,7 @@ resources:
   - argocd.yaml
   - cert-manager.yaml
   - guacamole.yaml
+  - kubevirt.yaml
   - metallb.yaml
   - metrics-server.yaml
   - pomerium-core.yaml
