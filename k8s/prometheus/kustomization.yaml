@@ -5,7 +5,7 @@ helmCharts:
 - name: kube-prometheus-stack
   repo: https://prometheus-community.github.io/helm-charts
   version: 67.10.0
-  releaseName: kube-prometheus-stack
+  releaseName: prometheus
 
 patches: 
 - path: grafana-auth.yaml
