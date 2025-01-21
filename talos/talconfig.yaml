@@ -49,15 +49,12 @@ controlPlane:
         value:
           bind-address: 0.0.0.0
   machineFiles:
-    - path: /var/auth/authentication-config.yaml
-      permissions: 0o644
-      op: create
-      content: |
+    - content: |
         apiVersion: apiserver.config.k8s.io/v1beta1
         kind: AuthenticationConfiguration
         jwt:
           - issuer:
-              url: https://k8s.pomerium.dev/
+              url: https://k8s.pomerium.dev/ # note: the trailing slash is required
               discoveryURL: https://k8s.pomerium.dev/.well-known/pomerium
               audiences:
                 - k8s.pomerium.dev
@@ -65,7 +62,9 @@ controlPlane:
               username:
                 claim: email
                 prefix: ''
-
+      path: /var/auth/authentication-config.yaml
+      permissions: 0o644
+      op: create
   # Common node labels, taints, annotations
   nodeLabels:
     rack: demo-rack

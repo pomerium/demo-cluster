@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab
+  namespace: gitlab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitlab
+  template:
+    metadata:
+      labels:
+        app: gitlab
+    spec:
+      containers:
+      - name: gitlab
+        image: "gitlab/gitlab-ee:latest"
+        ports:
+          - containerPort: 80
+          - containerPort: 443
+          - containerPort: 22
+        # ENV config: Minimal example uses HTTP internally
+        env:
+        - name: GITLAB_OMNIBUS_CONFIG
+          value: |
+            external_url 'http://gitlab.pomerium.dev'
+            letsencrypt['enable'] = false
+            nginx['listen_port'] = 80
+            nginx['listen_https'] = false
+        
+        volumeMounts:
+          - name: gitlab-config
+            mountPath: /etc/gitlab
+          - name: gitlab-data
+            mountPath: /var/opt/gitlab
+          - name: gitlab-logs
+            mountPath: /var/log/gitlab
+
+      volumes:
+      - name: gitlab-config
+        persistentVolumeClaim:
+          claimName: gitlab-config
+      - name: gitlab-data
+        persistentVolumeClaim:
+          claimName: gitlab-data
+      - name: gitlab-logs
+        persistentVolumeClaim:
+          claimName: gitlab-logs

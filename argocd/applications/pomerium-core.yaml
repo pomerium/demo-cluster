@@ -18,4 +18,5 @@ spec:
   ignoreDifferences:
   - group: "batch"
     kind: Job
+    name: pomerium-gen-secrets
     
