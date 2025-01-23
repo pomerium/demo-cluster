@@ -9,7 +9,7 @@ spec:
   authenticate:
     url: https://authenticate.pomerium.dev 
   identityProvider:
-    provider: keycloak
+    provider: oidc
     url: https://keycloak.pomerium.dev
     clientId: pomerium
     clientSecret:
