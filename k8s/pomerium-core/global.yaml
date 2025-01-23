@@ -6,3 +6,5 @@ spec:
   certificates:
     - pomerium/pomerium-dev
   secrets: pomerium/bootstrap
+  authenticate:
+    url: https://authenticate.pomerium.dev 
