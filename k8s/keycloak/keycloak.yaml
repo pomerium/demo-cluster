@@ -16,6 +16,8 @@ spec:
   ingress:
     enabled: false
   http:
-    tlsSecret: keycloak-cert
+    httpEnabled: true
+  hostname:
+    strict: false
   proxy:
     headers: xforwarded
