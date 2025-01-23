@@ -8,3 +8,10 @@ spec:
   secrets: pomerium/bootstrap
   authenticate:
     url: https://authenticate.pomerium.dev 
+  identityProvider:
+    provider: keycloak
+    url: https://keycloak.pomerium.dev
+    clientId: pomerium
+    clientSecret:
+      secretName: pomerium/keycloak-client-secret
+      secretKey: client-secret

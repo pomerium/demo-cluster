@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: "keycloak.pomerium.dev"
+    # the below two annotations are required
+    ingress.pomerium.io/allow_public_unauthenticated_access	: "true"
+    ingress.pomerium.io/secure_upstream: 'false'
+spec:
+  ingressClassName: pomerium
+  tls:
+    - secretName: pomerium-dev
+      hosts:
+        - keycloak.pomerium.dev
+  rules:
+    - host: "keycloak.pomerium.dev"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak-service
+                port:
+                  name: http
