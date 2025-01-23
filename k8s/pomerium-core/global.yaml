@@ -11,7 +11,4 @@ spec:
   identityProvider:
     provider: oidc
     url: https://keycloak.pomerium.dev
-    clientId: pomerium
-    clientSecret:
-      secretName: pomerium/keycloak-client-secret
-      secretKey: client-secret
+    secret: pomerium/keycloak-client-secret
