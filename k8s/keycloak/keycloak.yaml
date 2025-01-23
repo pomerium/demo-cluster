@@ -17,6 +17,7 @@ spec:
     enabled: false
   http:
     httpEnabled: true
+    httpPort: 80
   hostname:
     strict: false
     hostname: keycloak.pomerium.dev
