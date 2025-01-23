@@ -10,5 +10,5 @@ spec:
     url: https://authenticate.pomerium.dev 
   identityProvider:
     provider: oidc
-    url: https://keycloak.pomerium.dev
+    url: https://keycloak.pomerium.dev/realms/master/
     secret: pomerium/keycloak-client-secret
