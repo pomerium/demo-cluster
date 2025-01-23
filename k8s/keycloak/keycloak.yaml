@@ -13,9 +13,9 @@ spec:
     passwordSecret:
       name: keycloak-db-credentials
       key: password
+  ingress:
+    enabled: false
   http:
-    tlsSecret: keycloak-tls
-  hostname:
-    hostname: keycloak.pomerium.dev
+    tlsSecret: keycloak-cert
   proxy:
     headers: xforwarded
