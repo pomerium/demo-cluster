@@ -17,6 +17,7 @@ spec:
     enabled: false
   http:
     httpEnabled: true
+    httpsPort: 443
     httpPort: 80
   hostname:
     strict: false
