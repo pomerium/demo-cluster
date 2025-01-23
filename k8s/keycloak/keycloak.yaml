@@ -16,7 +16,8 @@ spec:
   ingress:
     enabled: false
   http:
-    httpsPort: 443
+    httpEnabled: true
+    httpPort: 80
   hostname:
     strict: false
     hostname: keycloak.pomerium.dev
