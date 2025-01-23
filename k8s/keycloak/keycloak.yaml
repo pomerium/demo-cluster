@@ -21,3 +21,5 @@ spec:
   hostname:
     strict: false
     hostname: keycloak.pomerium.dev
+  proxy:
+    headers: xforwarded
