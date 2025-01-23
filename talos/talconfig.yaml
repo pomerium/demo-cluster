@@ -48,6 +48,15 @@ controlPlane:
         path: /cluster/proxy/extraArgs
         value:
           bind-address: 0.0.0.0
+      - op: add
+        path: /cluster/apiServer/extraArgs
+        value:
+          authentication-config: /var/auth/authentication-config.yaml
+      - op: add
+        path: /cluster/apiServer/extraVolumes
+        value:
+          - hostPath: /var/auth/authentication-config.yaml
+            mountPath: /var/auth/authentication-config.yaml
   machineFiles:
     - content: |
         apiVersion: apiserver.config.k8s.io/v1beta1
