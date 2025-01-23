@@ -19,3 +19,4 @@ spec:
     httpEnabled: true
   hostname:
     strict: false
+    hostname: keycloak.pomerium.dev
