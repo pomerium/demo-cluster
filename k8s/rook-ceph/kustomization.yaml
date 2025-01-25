@@ -5,6 +5,7 @@ namespace: rook-ceph
 
 resources:
   - namespace.yaml
+  - monitoring.yaml
 
 helmCharts:
   - name: rook-ceph
