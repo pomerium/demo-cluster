@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: rook-ceph-mgr
-  namespace: default
+  namespace: rook-ceph
   labels:
     team: rook
 spec:
@@ -23,7 +23,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: rook-ceph-exporter
-  namespace: default
+  namespace: rook-ceph
   labels:
     team: rook
 spec:
