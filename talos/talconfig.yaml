@@ -184,7 +184,7 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.68.1
-        mtu: 1500
+        mtu: 9000
         # Add VIP config so all masters share the same floating IP
         vip:
           ip: 192.168.68.150
@@ -201,7 +201,7 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.68.1
-        mtu: 1500
+        mtu: 9000
         vip:
           ip: 192.168.68.150
 
@@ -217,7 +217,7 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.68.1
-        mtu: 1500
+        mtu: 9000
         vip:
           ip: 192.168.68.150
 
@@ -227,6 +227,24 @@ nodes:
   - hostname: kworker1
     controlPlane: false
     ipAddress: 192.168.68.110
+    networkInterfaces:
+      - interface: bond1
+        addresses:
+          - 192.168.68.110
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.68.1
+        mtu: 9000
+        bond:
+          mode: 802.3ad
+          miimon: 100
+          xmit_hash_policy: layer2+3
+          updelay: 200
+          downdelay: 200
+          lacp_rate: fast
+          slaves:
+            - eth2
+            - eth3        
     installDiskSelector:
       size: "<1TB"
       type: nvme
@@ -239,6 +257,24 @@ nodes:
   - hostname: kworker2
     controlPlane: false
     ipAddress: 192.168.68.111
+    networkInterfaces:
+      - interface: bond1
+        addresses:
+          - 192.168.68.111
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.68.1
+        mtu: 9000
+        bond:
+          mode: 802.3ad
+          miimon: 100
+          xmit_hash_policy: layer2+3
+          updelay: 200
+          downdelay: 200
+          lacp_rate: fast
+          slaves:
+            - eth2
+            - eth3 
     installDiskSelector:
       size: "<1TB"
       type: nvme
@@ -251,6 +287,24 @@ nodes:
   - hostname: kworker3
     controlPlane: false
     ipAddress: 192.168.68.112
+    networkInterfaces:
+      - interface: bond1
+        addresses:
+          - 192.168.68.112
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.68.1
+        mtu: 9000
+        bond:
+          mode: 802.3ad
+          miimon: 100
+          xmit_hash_policy: layer2+3
+          updelay: 200
+          downdelay: 200
+          lacp_rate: fast
+          slaves:
+            - eth2
+            - eth3 
     installDiskSelector:
       size: "<1TB"
       type: nvme
