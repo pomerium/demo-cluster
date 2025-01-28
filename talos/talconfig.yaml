@@ -67,10 +67,17 @@ controlPlane:
               discoveryURL: https://k8s.pomerium.dev/.well-known/pomerium
               audiences:
                 - k8s.pomerium.dev
+            claimValidationRules:
+              - expression: 'claims.email.endsWith("@pomerium.com")'
+                message: "Only users with @pomerium.com emails are allowed"
             claimMappings:
               username:
-                claim: email
-                prefix: ''
+                expression: '"user:" + claims.sub'  # Use 'sub' to satisfy Kubernetes' validation requirement
+              groups:
+                expression: |
+                  claims.email.endsWith("@pomerium.com") ? 
+                    (["viewer"] + (claims.email in ["wmedford@pomerium.com", "bdd@pomerium.com", "rsmith@pomerium.com"] ? ["admin"] : [])) 
+                    : []
       path: /var/auth/authentication-config.yaml
       permissions: 0o644
       op: create
