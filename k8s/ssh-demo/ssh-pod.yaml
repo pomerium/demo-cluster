@@ -30,6 +30,9 @@ spec:
           echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
           echo "PermitRootLogin no" >> /etc/ssh/sshd_config
 
+          # Generate host keys (needed for sshd to start properly)
+          ssh-keygen -A
+
           # Run SSH daemon in the foreground
           /usr/sbin/sshd -D -e
       ports:
