@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ssh-pod
+  labels:
+    app: ssh-pod
+spec:
+  containers:
+    - name: ssh-container
+      image: alpine:3.17
+      command: ["/bin/sh"]
+      args:
+        - -c
+        - |
+          set -ex
+          # Create a non-root user named 'sshuser' with no password
+          adduser -D -s /bin/sh -h /home/sshuser sshuser
+          mkdir -p /home/sshuser/.ssh
+
+          # Copy in the authorized_keys from ConfigMap
+          cp /authorized_keys /home/sshuser/.ssh/authorized_keys
+          chown -R sshuser:sshuser /home/sshuser/.ssh
+          chmod 700 /home/sshuser/.ssh
+          chmod 600 /home/sshuser/.ssh/authorized_keys
+
+          # Install openssh
+          apk add --no-cache openssh
+
+          # Disable password authentication and root login
+          echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
+          echo "PermitRootLogin no" >> /etc/ssh/sshd_config
+
+          # Run SSH daemon in the foreground
+          /usr/sbin/sshd -D -e
+      ports:
+        - containerPort: 22
+          name: ssh
+      volumeMounts:
+        - name: ssh-keys
+          mountPath: /authorized_keys
+          subPath: authorized_keys
+
+  volumes:
+    - name: ssh-keys
+      configMap:
+        name: ssh-config
+        items:
+          - key: authorized_keys
+            path: authorized_keys
