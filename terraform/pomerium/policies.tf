@@ -30,3 +30,23 @@ resource "pomerium_policy" "allow_pomerium" {
           is: pomerium.com
 EOF
 }
+
+resource "pomerium_policy" "allow_ops" {
+  name         = "allow_ops"
+  namespace_id = pomerium_namespace.demo.id
+  ppl          = <<EOF
+allow:
+  and:
+    - claim/group: ops
+EOF
+}
+
+resource "pomerium_policy" "allow_sales" {
+  name         = "allow_sales"
+  namespace_id = pomerium_namespace.demo.id
+  ppl          = <<EOF
+allow:
+  and:
+    - claim/group: sales
+EOF
+}

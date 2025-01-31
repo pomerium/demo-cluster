@@ -74,3 +74,11 @@ resource "pomerium_route" "prometheus" {
   allow_websockets = true
   allow_spdy       = true
 }
+
+resource "pomerium_route" "ssh" {
+  name         = "ssh"
+  from         = format("tcp+https://%s.%s:%s", "ssh", local.base_domain, "22")
+  to           = ["tcp://ssh-service.kube-system.svc.cluster.local:22"]
+  namespace_id = pomerium_namespace.demo.id
+  policies     = [pomerium_policy.allow_pomerium.id]
+}
