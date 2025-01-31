@@ -6,7 +6,6 @@ resources:
   - cert-manager.yaml
   - guacamole.yaml
   - keycloak.yaml
-  - kubevirt.yaml
   - metallb.yaml
   - metrics-server.yaml
   - pomerium-core.yaml
