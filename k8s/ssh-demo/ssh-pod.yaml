@@ -7,34 +7,40 @@ metadata:
 spec:
   containers:
     - name: ssh-container
-      image: alpine:3.17
-      command: ["/bin/sh"]
+      image: ubuntu:22.04
+      command: ["/bin/bash"]
       args:
         - -c
         - |
           set -ex
-          # Create a non-root user named 'sshuser' with no password
-          adduser -D -s /bin/sh -h /home/sshuser sshuser
+          
+          # Install OpenSSH server
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y openssh-server
+          
+          # Create a non-root user named 'sshuser' with an empty password (but no interactive password login)
+          useradd -m -d /home/sshuser -s /bin/bash sshuser
+          
+          # Prepare the SSH directory
           mkdir -p /home/sshuser/.ssh
-
-          # Copy in the authorized_keys from ConfigMap
           cp /authorized_keys /home/sshuser/.ssh/authorized_keys
           chown -R sshuser:sshuser /home/sshuser/.ssh
           chmod 700 /home/sshuser/.ssh
           chmod 600 /home/sshuser/.ssh/authorized_keys
-
-          # Install openssh
-          apk add --no-cache openssh
-
-          # Disable password authentication and root login
-          echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
-          echo "PermitRootLogin no" >> /etc/ssh/sshd_config
-
-          # Generate host keys (needed for sshd to start properly)
+          
+          # Update sshd_config to disable password authentication and root login
+          sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+          sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
+          echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config
+          
+          # Make sure runtime directory exists for sshd
+          mkdir -p /run/sshd
+          
+          # Generate host keys (needed if none exist yet)
           ssh-keygen -A
-
-          # Run SSH daemon in the foreground
-          /usr/sbin/sshd -D -e
+          
+          # Run sshd in the foreground, logging to stderr
+          exec /usr/sbin/sshd -D -e
       ports:
         - containerPort: 22
           name: ssh
