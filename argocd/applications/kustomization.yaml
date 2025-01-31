@@ -14,4 +14,3 @@ resources:
   - prometheus.yaml
   - rook-ceph.yaml
   - ssh-demo.yaml
-  - vault.yaml
