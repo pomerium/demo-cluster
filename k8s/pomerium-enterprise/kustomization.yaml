@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: pomerium-enterprise
 
 resources:
-  - github.com/pomerium/documentation/k8s/console?ref=0-22-0
+  - github.com/pomerium/documentation/k8s/console?ref=0-28-0
   - config.yaml
   - postgres.yaml
   - ingress.yaml
