@@ -4,13 +4,13 @@ metadata:
   name: enterprise
 data:
   # should match authenticate service URL from Pomerium Settings CRD
-  authenticate_service_url: https://authenticate.pomerium.dev 
+  authenticate_service_url: https://authenticate.pomerium.dev
   # audience should correspond to the name in the ingress you created for the console
   # without the protocol part
   audience: console.pomerium.dev,pomerium-api.pomerium.dev
   # administrators is a comma separated list of emails that would be granted admin privileges
   # only use it for bootstrapping, and grant explicit permissions via the UI to the Global namespace
-  administrators: wmedford@pomerium.com
+  administrators: wmedford@pomerium.com,tosullivan@pomerium.com
   # databroker service URL allows Console to communicate to Pomerium Core
   databroker_service_url: https://pomerium-databroker.pomerium.svc.cluster.local
   override_certificate_name: pomerium.dev
